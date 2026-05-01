@@ -85,9 +85,9 @@ public class ProductService {
     return filteredProducts;
 }
 
-    public Product getProductById(String id) {
+    public Product getProductById(Integer id) {
         for (Product product : products) {
-            if (product.getId().equals(id)) {
+            if (product.getId() == id) {
                 return product;
             }
         }
@@ -100,9 +100,9 @@ public class ProductService {
         return new ApiResponse("Product added successfully", "success");
     }
 
-    public ApiResponse updateProduct(String id, Product updatedProduct) {
+    public ApiResponse updateProduct(Integer id, Product updatedProduct) {
         for (Product product : products) {
-            if (product.getId().equals(id)) {
+            if (product.getId() == id) {
                 product.setName(updatedProduct.getName());
                 product.setPrice(updatedProduct.getPrice());
                 return new ApiResponse("Product updated successfully", "success");
@@ -112,11 +112,11 @@ public class ProductService {
 
     }
 
-    public ApiResponse deleteProduct(String id) {
+    public ApiResponse deleteProduct(Integer id) {
         Iterator<Product> iterator = products.iterator();
         while (iterator.hasNext()) {
             Product product = iterator.next();
-            if (product.getId().equals(id)) {
+            if (product.getId() == id) {
                 iterator.remove();
                 return new ApiResponse("Product deleted successfully", "success");
             }
