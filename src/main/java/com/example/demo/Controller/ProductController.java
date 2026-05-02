@@ -2,6 +2,7 @@ package com.example.demo.Controller;
 
 import java.util.List;
 
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,7 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Model.ApiResponse;
 import com.example.demo.Model.Product;
+import com.example.demo.Model.Product.CreateGroup;
+import com.example.demo.Model.Product.UpdateGroup;
 import com.example.demo.Service.ProductService;
+
+import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -70,23 +75,24 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public Product getProductById(@PathVariable String id) {
+    public Product getProductById(@PathVariable Integer id) {
         return productService.getProductById(id);
     }
  
     @PostMapping
-    public ApiResponse addProduct(@RequestBody Product product) {
+    public ApiResponse addProduct(@Validated(CreateGroup.class) @RequestBody Product product) {
         return productService.addProduct(product);
     }
 
     @PutMapping("/{id}")
-    public ApiResponse updateProduct(@PathVariable String id, @RequestBody Product product) {
+    public ApiResponse updateProduct(@PathVariable Integer id,  @Validated(UpdateGroup.class) @RequestBody Product product) {
         return productService.updateProduct(id, product);
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse deleteProduct(@PathVariable String id) {
+    public ApiResponse deleteProduct(@PathVariable Integer id) {
         return productService.deleteProduct(id);
     }
+    
 
 }
