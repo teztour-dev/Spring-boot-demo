@@ -67,7 +67,9 @@ public class ProductController {
      * }
      */
 
-    @GetMapping
+    //  -------------- validate --------------
+
+    /*@GetMapping
     public List<Product> getProducts(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Integer price) {
@@ -80,19 +82,62 @@ public class ProductController {
     }
  
     @PostMapping
-    public ApiResponse addProduct(@Validated(CreateGroup.class) @RequestBody Product product) {
+    public ApiResponse addProduct(
+       //  @Validated(CreateGroup.class)
+         @RequestBody Product product) {
         return productService.addProduct(product);
     }
 
     @PutMapping("/{id}")
-    public ApiResponse updateProduct(@PathVariable Integer id,  @Validated(UpdateGroup.class) @RequestBody Product product) {
+    public ApiResponse updateProduct(@PathVariable Integer id, 
+        // @Validated(UpdateGroup.class)
+         @RequestBody Product product) {
         return productService.updateProduct(id, product);
     }
 
     @DeleteMapping("/{id}")
     public ApiResponse deleteProduct(@PathVariable Integer id) {
         return productService.deleteProduct(id);
+    }*/
+
+ //     -------------- SQL repo --------------
+
+     @PostMapping
+    public ApiResponse addProduct(@Validated(CreateGroup.class) @RequestBody Product product) {
+        return productService.addProduct(product);
     }
     
 
+    @GetMapping
+    public List<Product> getProducts(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Integer price) {
+        return productService.getProducts(name, price);
+    }
+
+    @GetMapping("/search")
+    public List<Product> filterProducts(@RequestParam String keyword) {
+        return productService.nameSearch(keyword);
+    }
+
+    @GetMapping("/count")
+    public long countProducts() {
+        return productService.countProducts();
+    }
+    
+   @GetMapping("/avg")
+    public double avgProductPrices() {
+        return productService.avgPrice();
+    }
+    
+    @DeleteMapping("/{id}")
+    public ApiResponse deleteProduct(@PathVariable Integer id) {
+        return productService.deleteProduct(id);
+    }
+    
+    @PutMapping("/{id}")
+    public ApiResponse updateProduct(@PathVariable Integer id, @Validated(UpdateGroup.class) @RequestBody Product product) {
+        
+        return productService.updateProduct(id, product);
+    }
 }

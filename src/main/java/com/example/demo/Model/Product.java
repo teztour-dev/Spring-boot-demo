@@ -1,26 +1,36 @@
 package com.example.demo.Model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
+@Entity
+@Table(name = "products")
 public class Product {
 
     public interface CreateGroup {}
     public interface UpdateGroup {}
 
-
-    @NotNull(groups = CreateGroup.class)
-    @Positive(groups = CreateGroup.class)
+    //NotNull(groups = CreateGroup.class)
+    //@Positive(groups = CreateGroup.class)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotBlank(groups = {CreateGroup.class, UpdateGroup.class})
+    @NotBlank( message = "Product name is required", groups = {CreateGroup.class, UpdateGroup.class})
+    @Column(nullable = false)
     private String name;
 
-    @NotNull(groups = {CreateGroup.class, UpdateGroup.class})
-    @Positive(groups = {CreateGroup.class, UpdateGroup.class})
+    @NotNull( message = "Product price is required", groups = {CreateGroup.class, UpdateGroup.class})
+    @Positive( message = "Product price must be greater than zero", groups = {CreateGroup.class, UpdateGroup.class})
+    @Column(nullable = false)
     private Double price;
-
 
     public Product(Integer id, String name, Double price) {
         this.id = id;

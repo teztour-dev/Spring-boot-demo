@@ -6,11 +6,18 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.Model.ApiResponse;
 import com.example.demo.Model.Product;
+import com.example.demo.Repository.ProductRepository;
 
 @Service
 public class ProductService {
 
     private List<Product> products = new ArrayList<>();
+    private final ProductRepository productRepository;
+
+
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
     /*
      * public ApiResponse getProducts(String name, Integer price) {
@@ -61,7 +68,10 @@ public class ProductService {
      * }
      */
 
-    public List<Product> getProducts(String name, Integer price) {
+
+    //  -------------- validate --------------
+
+    /*public List<Product> getProducts(String name, Integer price) {
 
     List<Product> filteredProducts = new ArrayList<>();
 
@@ -123,6 +133,77 @@ public class ProductService {
         }
         return new ApiResponse("Product not found", "error");
 
+    }*/
+
+   //     -------------- SQL repo --------------
+
+    public ApiResponse addProduct(Product product){
+        
+        productRepository.save(product);
+
+        return new ApiResponse("Product added successfully", "success");
     }
+
+    public List<Product> getProducts (String name, Integer price){
+
+
+    if (name != null && price != null) {
+        return productRepository.findByNameAndPrice(
+                name,
+                price.doubleValue());
+    }
+
+    if (name != null) {
+        return productRepository.findByName(name);
+    }
+
+    if (price != null) {
+        return productRepository.findByPrice(price.doubleValue());
+    }
+
+    return productRepository.findAll(); 
+   }
+
+    public List<Product> nameSearch(String keyword){
+
+    return productRepository.nameFilter(keyword);
+
+   }
+
+    public long countProducts(){
+        return productRepository.total();
+    }
+
+    public double avgPrice(){
+        return productRepository.avgPrice();
+    }
+
+    public ApiResponse deleteProduct(Integer id) {
+       if(productRepository.existsById(id)){
+        productRepository.deleteById(id);
+        return new ApiResponse("Product deleted successfully", "success");
+    }
+        else
+              return new ApiResponse("Product not found", "error");
+    }
+
+    public ApiResponse updateProduct(Integer id, Product updatedProduct) {
+
+    Optional<Product> optionalProduct =
+            productRepository.findById(id);
+
+    if (optionalProduct.isEmpty()) {
+        return new ApiResponse("Product not found", "error");
+    }
+
+    Product product = optionalProduct.get();
+
+    product.setName(updatedProduct.getName());
+    product.setPrice(updatedProduct.getPrice());
+
+    productRepository.save(product);
+
+    return new ApiResponse("Product updated successfully", "success");
+}
 
 }
