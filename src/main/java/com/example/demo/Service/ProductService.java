@@ -2,208 +2,119 @@ package com.example.demo.Service;
 
 import java.util.*;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.DTO.ProductResponseDTO;
+import com.example.demo.DTO.ProductUpdateRequestDTO;
+import com.example.demo.Exception.ProductNotFoundException;
 import com.example.demo.Model.ApiResponse;
 import com.example.demo.Model.Product;
+import com.example.demo.DTO.ApiResponseDTO;
+import com.example.demo.DTO.ProductCreateRequestDTO;
+import com.example.demo.DTO.ProductPatchRequestDTO;
 import com.example.demo.Repository.ProductRepository;
+import com.example.demo.Specification.ProductSpecification;
+import com.example.demo.Mapper.*;
 
 @Service
 public class ProductService {
 
-    private List<Product> products = new ArrayList<>();
     private final ProductRepository productRepository;
+    private final IProductMapper iProductMapper;
 
-
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, IProductMapper iProductMapper) {
         this.productRepository = productRepository;
+        this.iProductMapper = iProductMapper;
     }
 
-    /*
-     * public ApiResponse getProducts(String name, Integer price) {
-     * 
-     * String message = "all Products fetched successfully";
-     * if (name != null) {
-     * message += " with name: " + name;
-     * }
-     * if (price != null) {
-     * message += " and price: " + price;
-     * }
-     * return new ApiResponse(message, "success");
-     * }
-     * 
-     * 
-     * public ApiResponse getProductById(String id) {
-     * return new ApiResponse("Product with ID " + id + " fetched successfully",
-     * "success");
-     * }
-     * 
-     * 
-     * public ApiResponse addProduct (Product product) {
-     * 
-     * products.add(product);
-     * 
-     * String message = "Product : "
-     * + product.getName() + " with price: "
-     * + product.getPrice() + " added successfully";
-     * 
-     * return new ApiResponse(message, "success");
-     * }
-     * 
-     * 
-     * public ApiResponse updateProduct(int id, Product product) {
-     * 
-     * String message = "The price of Product with ID " + id + " and name: "
-     * + product.getName() + "is updated successfully to: " + product.getPrice();
-     * 
-     * return new ApiResponse(message, "success");
-     * }
-     * 
-     * 
-     * public ApiResponse deleteProduct(int id) {
-     * String message = "Product with ID " + id + " deleted successfully";
-     * 
-     * return new ApiResponse(message, "success");
-     * 
-     * }
-     */
+    public ApiResponseDTO<ProductResponseDTO> addProduct(ProductCreateRequestDTO dto) {
 
+        Product product = iProductMapper.toEntityCreate(dto);
 
-    //  -------------- validate --------------
+        Product savedProduct = productRepository.save(product);
+        ProductResponseDTO response = iProductMapper.toResponseDTO(savedProduct);
 
-    /*public List<Product> getProducts(String name, Integer price) {
-
-    List<Product> filteredProducts = new ArrayList<>();
-
-    for (Product product : products) {
-
-        boolean matches = true;
-
-        if (name != null && !product.getName().equalsIgnoreCase(name)) {
-            matches = false;
-        }
-
-        if (price != null && !product.getPrice().equals(price.doubleValue())) {
-            matches = false;
-        }
-
-        if (matches) {
-            filteredProducts.add(product);
-        }
+        return new ApiResponseDTO<>("Product added successfully", response);
     }
 
-    return filteredProducts;
-}
+    public ApiResponseDTO< Page<ProductResponseDTO>> getProducts(Pageable pageable) {
 
-    public Product getProductById(Integer id) {
-        for (Product product : products) {
-            if (product.getId() == id) {
-                return product;
-            }
-        }
-
-        return null; // Return null if product not found
+        Page<ProductResponseDTO> productDTOs = productRepository.findAll(pageable).map(iProductMapper::toResponseDTO);
+    
+        return new ApiResponseDTO<>("Products retrieved successfully", productDTOs);
     }
 
-    public ApiResponse addProduct(Product product) {
-        products.add(product);
-        return new ApiResponse("Product added successfully", "success");
+    public ProductResponseDTO getProductsByID(Integer id) {
+
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Product with id " + id + " not found"));
+        return iProductMapper.toResponseDTO(product);
     }
 
-    public ApiResponse updateProduct(Integer id, Product updatedProduct) {
-        for (Product product : products) {
-            if (product.getId() == id) {
-                product.setName(updatedProduct.getName());
-                product.setPrice(updatedProduct.getPrice());
-                return new ApiResponse("Product updated successfully", "success");
-            }
-        }
-        return new ApiResponse("Product not found", "error");
+    public List<ProductResponseDTO> nameSearch(String keyword) {
+
+        return productRepository.findAll(ProductSpecification.hasName(keyword)).stream().map(iProductMapper::toResponseDTO).toList();
 
     }
 
-    public ApiResponse deleteProduct(Integer id) {
-        Iterator<Product> iterator = products.iterator();
-        while (iterator.hasNext()) {
-            Product product = iterator.next();
-            if (product.getId() == id) {
-                iterator.remove();
-                return new ApiResponse("Product deleted successfully", "success");
-            }
-        }
-        return new ApiResponse("Product not found", "error");
-
-    }*/
-
-   //     -------------- SQL repo --------------
-
-    public ApiResponse addProduct(Product product){
-        
-        productRepository.save(product);
-
-        return new ApiResponse("Product added successfully", "success");
-    }
-
-    public List<Product> getProducts (String name, Integer price){
-
-
-    if (name != null && price != null) {
-        return productRepository.findByNameAndPrice(
-                name,
-                price.doubleValue());
-    }
-
-    if (name != null) {
-        return productRepository.findByName(name);
-    }
-
-    if (price != null) {
-        return productRepository.findByPrice(price.doubleValue());
-    }
-
-    return productRepository.findAll(); 
-   }
-
-    public List<Product> nameSearch(String keyword){
-
-    return productRepository.nameFilter(keyword);
-
-   }
-
-    public long countProducts(){
+    public long countProducts() {
         return productRepository.total();
     }
 
-    public double avgPrice(){
+    public double avgPrice() {
         return productRepository.avgPrice();
     }
 
     public ApiResponse deleteProduct(Integer id) {
-       if(productRepository.existsById(id)){
-        productRepository.deleteById(id);
-        return new ApiResponse("Product deleted successfully", "success");
-    }
-        else
-              return new ApiResponse("Product not found", "error");
-    }
-
-    public ApiResponse updateProduct(Integer id, Product updatedProduct) {
-
-    Optional<Product> optionalProduct =
-            productRepository.findById(id);
-
-    if (optionalProduct.isEmpty()) {
-        return new ApiResponse("Product not found", "error");
+        if (productRepository.existsById(id)) {
+            productRepository.deleteById(id);
+            return new ApiResponse("Product deleted successfully", "success");
+        } else
+            return new ApiResponse("Product not found", "error");
     }
 
-    Product product = optionalProduct.get();
+    public ApiResponseDTO<ProductResponseDTO> updateProduct(Integer id, ProductUpdateRequestDTO updatedProduct) {
 
-    product.setName(updatedProduct.getName());
-    product.setPrice(updatedProduct.getPrice());
+        Product product = productRepository
+                .findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(
+                        "Product with id " + id + " not found"));
 
-    productRepository.save(product);
+        product.setName(updatedProduct.getName());
+        product.setPrice(updatedProduct.getPrice());
 
-    return new ApiResponse("Product updated successfully", "success");
-}
+        productRepository.save(product);
 
+        return new ApiResponseDTO<>("Product updated successfully", iProductMapper.toResponseDTO(product));
+    }
+
+    public ApiResponseDTO<ProductResponseDTO> partialUpdateProduct(
+            Integer id,
+            ProductPatchRequestDTO dto) {
+
+        Product product = productRepository
+                .findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(
+                        "Product with id " + id + " not found"));
+
+        if (dto.getName() != null) {
+            product.setName(dto.getName());
+        }
+
+        if (dto.getPrice() != null) {
+            product.setPrice(dto.getPrice());
+        }
+
+        if (dto.getQuantity() != null) {
+            product.setQuantity(dto.getQuantity());
+        }
+
+        Product savedProduct = productRepository.save(product);
+
+        return new ApiResponseDTO<>(
+                "Product updated successfully",
+                iProductMapper.toResponseDTO(savedProduct));
+    }
 }

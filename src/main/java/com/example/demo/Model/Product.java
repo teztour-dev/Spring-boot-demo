@@ -14,28 +14,32 @@ import jakarta.validation.constraints.Positive;
 @Table(name = "products")
 public class Product {
 
-    public interface CreateGroup {}
-    public interface UpdateGroup {}
-
-    //NotNull(groups = CreateGroup.class)
-    //@Positive(groups = CreateGroup.class)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotBlank( message = "Product name is required", groups = {CreateGroup.class, UpdateGroup.class})
     @Column(nullable = false)
     private String name;
-
-    @NotNull( message = "Product price is required", groups = {CreateGroup.class, UpdateGroup.class})
-    @Positive( message = "Product price must be greater than zero", groups = {CreateGroup.class, UpdateGroup.class})
+   
     @Column(nullable = false)
     private Double price;
 
-    public Product(Integer id, String name, Double price) {
+    private Double quantity;
+
+    
+    public Double getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Double quantity) {
+        this.quantity = quantity;
+    }
+
+    public Product(Integer id, String name, Double price, Double quantity) {
         this.id = id;
         this.name = name;
         this.price = price;
+        this.quantity = quantity;
     }
 
     public Product() {
