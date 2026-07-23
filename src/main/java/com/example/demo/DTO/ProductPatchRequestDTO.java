@@ -11,7 +11,7 @@ public class ProductPatchRequestDTO {
     private Double price;
 
     @Positive( message = "The quantity must be greater than zero")
-    private Double quantity;
+    private Integer quantity;
 
 
      public ProductPatchRequestDTO() {
@@ -20,7 +20,7 @@ public class ProductPatchRequestDTO {
 
      public ProductPatchRequestDTO(String name,
             @Positive(message = "Product price must be greater than zero") Double price,
-            @Positive(message = "The quantity must be greater than zero") Double quantity) {
+            @Positive(message = "The quantity must be greater than zero") Integer quantity) {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
@@ -42,11 +42,11 @@ public class ProductPatchRequestDTO {
         this.price = price;
     }
 
-    public Double getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Double quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 

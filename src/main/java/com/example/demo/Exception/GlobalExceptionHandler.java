@@ -17,36 +17,69 @@ import com.example.demo.DTO.ApiErrorDTO;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiErrorDTO> handleValidationExceptions(MethodArgumentNotValidException ex,  jakarta.servlet.http.HttpServletRequest request) {
-        
-       ApiErrorDTO error = new ApiErrorDTO(
-                LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                ex.getBindingResult().getFieldError().getDefaultMessage(),
-                request.getRequestURI());
+        @ExceptionHandler(MethodArgumentNotValidException.class)
+        public ResponseEntity<ApiErrorDTO> handleValidationExceptions(MethodArgumentNotValidException ex,
+                        jakarta.servlet.http.HttpServletRequest request) {
 
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(error);
+                ApiErrorDTO error = new ApiErrorDTO(
+                                LocalDateTime.now(),
+                                HttpStatus.BAD_REQUEST.value(),
+                                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                                ex.getBindingResult().getFieldError().getDefaultMessage(),
+                                request.getRequestURI());
 
-    }
+                return ResponseEntity
+                                .status(HttpStatus.BAD_REQUEST)
+                                .body(error);
 
-    @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<ApiErrorDTO> handleProductNotFound(ProductNotFoundException ex,
-            jakarta.servlet.http.HttpServletRequest request) {
+        }
 
-        ApiErrorDTO error = new ApiErrorDTO(
-                LocalDateTime.now(),
-                HttpStatus.NOT_FOUND.value(),
-                HttpStatus.NOT_FOUND.getReasonPhrase(),
-                ex.getMessage(),
-                request.getRequestURI());
+        @ExceptionHandler(ProductNotFoundException.class)
+        public ResponseEntity<ApiErrorDTO> handleProductNotFound(ProductNotFoundException ex,
+                        jakarta.servlet.http.HttpServletRequest request) {
 
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(error);
-    }
+                ApiErrorDTO error = new ApiErrorDTO(
+                                LocalDateTime.now(),
+                                HttpStatus.NOT_FOUND.value(),
+                                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                                ex.getMessage(),
+                                request.getRequestURI());
+
+                return ResponseEntity
+                                .status(HttpStatus.NOT_FOUND)
+                                .body(error);
+        }
+
+        @ExceptionHandler(CategoryAlreadyExistsException.class)
+        public ResponseEntity<ApiErrorDTO> handleCategoryAlreadyExists(CategoryAlreadyExistsException ex,
+                        jakarta.servlet.http.HttpServletRequest request) {
+
+                ApiErrorDTO error = new ApiErrorDTO(
+                                LocalDateTime.now(),
+                                HttpStatus.CONFLICT.value(),
+                                HttpStatus.CONFLICT.getReasonPhrase(),
+                                ex.getMessage(),
+                                request.getRequestURI());
+
+                return ResponseEntity
+                                .status(HttpStatus.CONFLICT)
+                                .body(error);
+        }
+
+        @ExceptionHandler(CategoryNotFoundException.class)
+        public ResponseEntity<ApiErrorDTO> handleCategoryNotFound(CategoryNotFoundException ex,
+                        jakarta.servlet.http.HttpServletRequest request) {
+
+                ApiErrorDTO error = new ApiErrorDTO(
+                                LocalDateTime.now(),
+                                HttpStatus.NOT_FOUND.value(),
+                                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                                ex.getMessage(),
+                                request.getRequestURI());
+
+                return ResponseEntity
+                                .status(HttpStatus.NOT_FOUND)
+                                .body(error);
+        }
 
 }

@@ -17,10 +17,10 @@ import com.example.demo.DTO.ApiResponseDTO;
 import com.example.demo.DTO.ProductCreateRequestDTO;
 import com.example.demo.DTO.ProductPatchRequestDTO;
 import com.example.demo.DTO.ProductResponseDTO;
+import com.example.demo.DTO.ProductSearchDTO;
 import com.example.demo.DTO.ProductUpdateRequestDTO;
 import com.example.demo.Model.ApiResponse;
 import com.example.demo.Service.ProductService;
-
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,48 +37,53 @@ public class ProductController {
     }
 
     @PostMapping
-    public ApiResponseDTO<ProductResponseDTO> addProduct(@Validated @RequestBody ProductCreateRequestDTO dto){
+    public ApiResponseDTO<ProductResponseDTO> addProduct(@Validated @RequestBody ProductCreateRequestDTO dto) {
         return productService.addProduct(dto);
     }
 
     @GetMapping
-    public  ApiResponseDTO< Page<ProductResponseDTO>> getProducts(Pageable pageable) {
+    public ApiResponseDTO<Page<ProductResponseDTO>> getProducts(Pageable pageable) {
         return productService.getProducts(pageable);
     }
 
     @GetMapping("/{id}")
-    public ProductResponseDTO getById(@PathVariable Integer id){
+    public ProductResponseDTO getById(@PathVariable Integer id) {
         return productService.getProductsByID(id);
     }
 
     @GetMapping("/search")
-    public List<ProductResponseDTO> filterProducts(@RequestParam String keyword) {
-        return productService.nameSearch(keyword);
+    public ApiResponseDTO<List<ProductResponseDTO>> searchProducts(
+            ProductSearchDTO searchDTO) {
+
+        return productService.search(searchDTO);
+
     }
 
     @GetMapping("/count")
     public long countProducts() {
         return productService.countProducts();
     }
-    
-   @GetMapping("/avg")
+
+    @GetMapping("/avg")
     public double avgProductPrices() {
         return productService.avgPrice();
     }
-    
+
     @DeleteMapping("/{id}")
     public ApiResponse deleteProduct(@PathVariable Integer id) {
         return productService.deleteProduct(id);
     }
-    
+
     @PutMapping("/{id}")
-    public ApiResponseDTO<ProductResponseDTO> updateProduct(@PathVariable Integer id, @Validated @RequestBody ProductUpdateRequestDTO updatedProduct) {
-        
+    public ApiResponseDTO<ProductResponseDTO> updateProduct(@PathVariable Integer id,
+            @Validated @RequestBody ProductUpdateRequestDTO updatedProduct) {
+
         return productService.updateProduct(id, updatedProduct);
     }
 
     @PatchMapping("/{id}")
-    public ApiResponseDTO<ProductResponseDTO> partialUpdateProduct(@PathVariable Integer id, @Validated @RequestBody ProductPatchRequestDTO updatedProduct) {
+    public ApiResponseDTO<ProductResponseDTO> partialUpdateProduct(@PathVariable Integer id,
+            @Validated @RequestBody ProductPatchRequestDTO updatedProduct) {
         return productService.partialUpdateProduct(id, updatedProduct);
     }
 }

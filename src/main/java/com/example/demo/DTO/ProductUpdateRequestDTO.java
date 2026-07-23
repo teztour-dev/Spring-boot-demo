@@ -16,7 +16,7 @@ public class ProductUpdateRequestDTO {
 
     @Positive( message = "The quantity must be greater than zero")
     @NotNull( message = "quantity is required")
-    private Double quantity;
+    private Integer quantity;
 
     public String getName() {
         return name;
@@ -34,17 +34,17 @@ public class ProductUpdateRequestDTO {
         this.price = price;
     }
 
-    public Double getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Double quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
     public ProductUpdateRequestDTO(@NotBlank(message = "Product name is required") String name,
             @NotNull(message = "Product price is required") @Positive(message = "Product price must be greater than zero") Double price,
-            @Positive(message = "The quantity must be greater than zero") @NotNull(message = "quantity is required") Double quantity) {
+            @Positive(message = "The quantity must be greater than zero") @NotNull(message = "quantity is required") Integer quantity) {
         this.name = name;
         this.price = price;
         this.quantity = quantity;

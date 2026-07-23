@@ -15,6 +15,8 @@ public interface IProductMapper {
     @Mapping(source = "name", target = "productName")
     @Mapping(source = "price", target = "productPrice")
     @Mapping(source = "quantity", target = "productQuantity")
+    @Mapping(source = "category.name", target = "categoryName")
+    @Mapping(source = "category.id", target = "categoryId")
     ProductResponseDTO toResponseDTO(Product product);
 
 

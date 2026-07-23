@@ -5,7 +5,9 @@ public class ProductResponseDTO {
     private Integer id;
     private String productName;
     private Double productPrice;
-    private Double productQuantity;
+    private Integer productQuantity;
+    private String categoryName;
+    private Integer categoryId;
 
     public Integer getId() {
         return id;
@@ -25,12 +27,25 @@ public class ProductResponseDTO {
     public void setProductPrice(Double productPrice) {
         this.productPrice = productPrice;
     }
-    public Double getProductQuantity() {
+    public Integer getProductQuantity() {
         return productQuantity;
     }
-    public void setProductQuantity(Double productQuantity) {
+    public void setProductQuantity(Integer productQuantity) {
         this.productQuantity = productQuantity;
     }
 
+    public String getCategoryName() {
+        return categoryName;
+    }
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
 
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+    
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
 }

@@ -6,9 +6,6 @@ import jakarta.validation.constraints.Positive;
 
 public class ProductCreateRequestDTO {
 
-
-
-
     @NotBlank( message = "Product name is required")
     private String name;
     
@@ -18,7 +15,10 @@ public class ProductCreateRequestDTO {
 
     @Positive( message = "The quantity must be greater than zero")
     @NotNull( message = "quantity is required")
-    private Double quantity;
+    private Integer quantity;
+
+    @NotNull( message = "Category ID is required")
+    private Integer categoryId;
 
 
     public String getName() {
@@ -33,10 +33,10 @@ public class ProductCreateRequestDTO {
     public void setPrice(Double price) {
         this.price = price;
     }
-    public Double getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
-    public void setQuantity(Double quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
@@ -45,9 +45,18 @@ public class ProductCreateRequestDTO {
     }
 
 
-     public ProductCreateRequestDTO(String name, Double price, Double quantity) {
+     public ProductCreateRequestDTO(String name, Double price, Integer quantity, Integer categoryId) {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
+        this.categoryId = categoryId;
+    }
+
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
     }
 }
